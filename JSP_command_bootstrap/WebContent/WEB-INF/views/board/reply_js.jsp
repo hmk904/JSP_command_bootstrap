@@ -23,6 +23,40 @@
 </div>
 
 {{/each}}	
+
+
+<script type="text/x-handlebars-template"  id="reply-pagination-template" >
+<li class="paginate_button page-item">
+	<a href="1" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">
+		<i class='fas fa-angle-double-left'></i>
+	</a>
+</li>
+<li class="paginate_button page-item">
+	<a href="{{#if prev}}{{prevPageNum}}{{/if}}" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">
+		<i class='fas fa-angle-left'></i>
+	</a>
+</li>
+{{#each pageNum}}
+<li class="paginate_button page-item {{signActive this}} ">
+	<a href="{{this}}" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">{{this}}</a>
+</li>
+{{/each}}
+
+<li class="paginate_button page-item ">
+	<a href="{{#if next}}{{nextPageNum}}{{/if}}" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">
+		<i class='fas fa-angle-right'></i>
+	</a>
+</li>
+<li class="paginate_button page-item">
+	<a href="{{realEndPage}}" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">
+		<i class='fas fa-angle-double-right'></i>
+	</a>
+</li>	
+</script>
+
+
+
+
 </script>
 
 
@@ -118,12 +152,37 @@ function replyModify_go(){
 	
 	//JSON으로 내보냄.
 	$.ajax({
-		url:"<%=request.getContextPath()%>/reply/modfiy.do",
+		url:"<%=request.getContextPath()%>/reply/modify.do",
 		type:"post",
 		data:JSON.stringify(sendData),
 		contentType:"application/json",
 		success:function(result){
-			
+			alert("수정되었습니다.");
+			getPage("<%=request.getContextPath()%>/reply/list.do?bno=${board.bno}&page="+replyPage);
+		},
+		error:function(error){
+			AjaxErrorSecurityRedirectHandler(error.status);
+		},
+		complete:function(){
+			$('#modifyModal').modal('hide');
+		}
+	});
+}
+
+function replyRemove_go(){
+	//alert("delete btn");
+	var ans = confirm("선택한 댓글을 삭제하시겠습니까?");
+    if(!ans) return false;
+	var rno=$('h4.modal-title').text();
+	
+	//alert(rno);
+	$.ajax({
+		url:"<%=request.getContextPath()%>/reply/remove.do?rno="+rno+"&page="+replyPage+"&bno=${board.bno}",
+		type:"get",
+		success:function(page){
+			alert("삭제되었습니다.");
+			getPage("<%=request.getContextPath()%>/reply/list.do?bno=${board.bno}&page="+page);
+			replyPage=page;
 		},
 		error:function(error){
 			AjaxErrorSecurityRedirectHandler(error.status);
