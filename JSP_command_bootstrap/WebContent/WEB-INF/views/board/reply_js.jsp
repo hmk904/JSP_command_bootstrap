@@ -92,6 +92,48 @@ function replyRegist_go(){
 	});
 }
 
+// 댓글수정 modal 알럿문 나오고 modal나옴.
+function replyModifyModal_go(rno){
+	//alert(rno);
+ 	//alert($('div#'+rno+'-replytext').text());
+ 	
+ 	//detail.jsp에 있음
+ 	$('div#modifyModal div.modal-body input#replytext').val($('div#'+rno+'-replytext').text());
+ 	$('div#modifyModal div.modal-header h4.modal-title').text(rno);
+}
+
+//댓글 수정. 
+function replyModify_go(){
+	//alert("modify btn");
+	
+	var rno=$('div#modifyModal h4.modal-title').text();
+	var replytext=$('div#modifyModal #replytext').val();
+	
+	// JSON data 만듬.
+	var sendData={
+			"rno":rno,
+			"replytext":replytext
+	}
+	//console.log(sendData);
+	
+	//JSON으로 내보냄.
+	$.ajax({
+		url:"<%=request.getContextPath()%>/reply/modfiy.do",
+		type:"post",
+		data:JSON.stringify(sendData),
+		contentType:"application/json",
+		success:function(result){
+			
+		},
+		error:function(error){
+			AjaxErrorSecurityRedirectHandler(error.status);
+		},
+		complete:function(){
+			$('#modifyModal').modal('hide');
+		}
+	});
+}
+
 </script>
 
 
